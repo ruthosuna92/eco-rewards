@@ -1,7 +1,7 @@
+import { Suspense } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { mapCentreRow, type RecyclingCentreRow } from '@/lib/centres'
-import { CentresGrid } from './CentresGrid'
-import { CentresMapLoader } from './CentresMapLoader'
+import { CentresView } from './CentresView'
 
 export default async function CentresPage() {
   const supabase = await createClient()
@@ -23,26 +23,9 @@ export default async function CentresPage() {
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-bark tracking-tight mb-2">
-          Centros de reciclaje
-        </h1>
-        <p className="text-bark-light">
-          {centres.length} puntos de reciclaje en Bogotá — mucho más de lo que crees 🌱
-        </p>
-      </div>
-
-      <CentresMapLoader centres={centres} />
-
-      <CentresGrid centres={centres} />
-
-      {centres.length === 0 && (
-        <div className="text-center py-20 text-bark-light">
-          <p className="text-lg">No hay centros disponibles aún.</p>
-        </div>
-      )}
+      <Suspense fallback={null}>
+        <CentresView centres={centres} />
+      </Suspense>
     </main>
   )
 }

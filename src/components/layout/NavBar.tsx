@@ -2,12 +2,14 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { Leaf, Search, Menu, X, Bell, User } from "lucide-react";
 
 import { ROUTES } from "@/lib/constants";
 import { cx } from "@/lib/cx";
+
+const SEARCH_DEBOUNCE_MS = 200;
 
 const navLinks = [
   { name: "Home", path: ROUTES.home },
@@ -19,7 +21,29 @@ const navLinks = [
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const { user, isLoaded } = useUser();
+
+  const [searchQuery, setSearchQuery] = React.useState(() => searchParams.get("q") ?? "");
+
+  React.useEffect(() => {
+    const handle = setTimeout(() => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (searchQuery) {
+        params.set("q", searchQuery);
+      } else {
+        params.delete("q");
+      }
+      const queryString = params.toString();
+      router.replace(queryString ? `${pathname}?${queryString}` : pathname, {
+        scroll: false,
+      });
+    }, SEARCH_DEBOUNCE_MS);
+
+    return () => clearTimeout(handle);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery]);
 
   const initials = React.useMemo(() => {
     if (!user) return null;
@@ -49,7 +73,7 @@ export function Navbar() {
   }, [user]);
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-earth/90 backdrop-blur-md border-b border-border">
+    <nav className="sticky top-0 z-[9999] w-full bg-earth/90 backdrop-blur-md border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
           {/* Logo */}
@@ -98,6 +122,8 @@ export function Navbar() {
               <input
                 type="text"
                 placeholder="Find recycling..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className={cx(
                   "pl-10 pr-4 py-2.5 w-56 text-sm rounded-2xl border border-border",
                   "bg-white/80 backdrop-blur-sm shadow-sm",
