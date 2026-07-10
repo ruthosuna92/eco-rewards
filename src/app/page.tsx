@@ -9,12 +9,42 @@ import {
   Camera,
   Gift,
   CheckCircle,
+  User,
 } from "lucide-react";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 
 export default async function LandingPage() {
   const { userId } = await auth();
   const isLoggedIn = !!userId;
+  const user = isLoggedIn ? await currentUser() : null;
+
+  const previewFirstName = user?.firstName?.trim() || null;
+  const previewInitials = (() => {
+    if (!user) return null;
+
+    const firstName = user.firstName?.trim();
+    const lastName = user.lastName?.trim();
+    if (firstName && lastName) {
+      return `${firstName[0]}${lastName[0]}`.toUpperCase();
+    }
+
+    const fullName = user.fullName?.trim();
+    if (fullName) {
+      const parts = fullName.split(/\s+/).filter(Boolean);
+      if (parts.length >= 2) {
+        return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+      }
+      if (parts.length === 1) {
+        return parts[0][0].toUpperCase();
+      }
+    }
+
+    if (firstName) {
+      return firstName[0].toUpperCase();
+    }
+
+    return null;
+  })();
 
   return (
     <div className="min-h-screen bg-earth">
@@ -31,12 +61,6 @@ export default async function LandingPage() {
               </span>
             </Link>
             <div className="hidden md:flex items-center space-x-1">
-              <Link
-                href="/centres"
-                className="px-4 py-2 rounded-xl text-sm font-medium text-bark-light hover:text-forest hover:bg-earth-warm transition-all duration-200"
-              >
-                Centros
-              </Link>
               {isLoggedIn ? (
                 <Link
                   href="/dashboard"
@@ -151,11 +175,15 @@ export default async function LandingPage() {
                         Bienvenida de vuelta
                       </p>
                       <p className="text-lg font-bold text-bark mt-0.5">
-                        Hola, María 👋
+                        {isLoggedIn
+                          ? previewFirstName
+                            ? `Hola, ${previewFirstName} 👋`
+                            : "Hola, de nuevo 👋"
+                          : "Hola 👋"}
                       </p>
                     </div>
                     <div className="h-11 w-11 rounded-2xl bg-forest text-white flex items-center justify-center font-semibold text-sm shadow-md">
-                      MG
+                      {previewInitials ?? <User className="h-5 w-5" />}
                     </div>
                   </div>
                   {/* Points */}

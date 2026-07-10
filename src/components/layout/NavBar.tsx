@@ -3,7 +3,8 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Leaf, Search, Menu, X, Bell } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
+import { Leaf, Search, Menu, X, Bell, User } from "lucide-react";
 
 import { ROUTES } from "@/lib/constants";
 import { cx } from "@/lib/cx";
@@ -18,6 +19,34 @@ const navLinks = [
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const pathname = usePathname();
+  const { user, isLoaded } = useUser();
+
+  const initials = React.useMemo(() => {
+    if (!user) return null;
+
+    const firstName = user.firstName?.trim();
+    const lastName = user.lastName?.trim();
+    if (firstName && lastName) {
+      return `${firstName[0]}${lastName[0]}`.toUpperCase();
+    }
+
+    const fullName = user.fullName?.trim();
+    if (fullName) {
+      const parts = fullName.split(/\s+/).filter(Boolean);
+      if (parts.length >= 2) {
+        return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+      }
+      if (parts.length === 1) {
+        return parts[0][0].toUpperCase();
+      }
+    }
+
+    if (firstName) {
+      return firstName[0].toUpperCase();
+    }
+
+    return null;
+  }, [user]);
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-earth/90 backdrop-blur-md border-b border-border">
@@ -97,7 +126,16 @@ export function Navbar() {
               )}
               aria-label="Profile"
             >
-              JD
+              {!isLoaded ? (
+                <div
+                  className="h-5 w-5 rounded-full bg-white/30 animate-pulse"
+                  aria-hidden="true"
+                />
+              ) : initials ? (
+                initials
+              ) : (
+                <User className="h-5 w-5" />
+              )}
             </div>
           </div>
 

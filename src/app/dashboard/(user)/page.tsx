@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useUser } from "@clerk/nextjs";
 import {
   ArrowRight,
   MapPin,
@@ -101,6 +102,8 @@ const CENTRE_IMAGES = [
 
 export default function Page() {
   const [isLoading, setIsLoading] = useState(true);
+  const { user, isLoaded: isUserLoaded } = useUser();
+  const firstName = isUserLoaded ? user?.firstName?.trim() || null : null;
 
   useEffect(() => {
     const t = setTimeout(() => setIsLoading(false), 900);
@@ -163,7 +166,7 @@ const kpis = [
           <div className="relative z-10 space-y-8">
             <div className="space-y-2">
               <h1 className="text-4xl font-bold text-bark tracking-tight">
-                Hola Alex, estás marcando una{" "}
+                {firstName ? `Hola ${firstName}, ` : "Hola, "}estás marcando una{" "}
                 <span className="text-forest">diferencia!</span> 🌍
               </h1>
               <p className="text-bark-light text-lg max-w-2xl">

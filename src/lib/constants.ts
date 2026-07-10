@@ -1,9 +1,9 @@
 export const ROUTES = {
   home: "/",
-  centres: "/centres",
-  register: "/register",
-  wallet: "/wallet",
-  categories: "/categories",
-  category: (id: string) => `/category/${id}`,
-  material: (id: string) => `/material/${id}`,
+  centres: "/dashboard/centres",
+  register: "/dashboard/register",
+  wallet: "/dashboard/wallet",
+  categories: "/dashboard/categories",
+  category: (id: string) => `/dashboard/category/${id}`,
+  material: (id: string) => `/dashboard/material/${id}`,
 };

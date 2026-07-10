@@ -3,6 +3,7 @@
 import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 import {
   LayoutDashboard,
   FileText,
@@ -26,6 +27,28 @@ type MenuItem = {
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
+  const { user, isLoaded: isUserLoaded } = useUser();
+
+  const displayName = useMemo(() => {
+    if (!user) return null;
+
+    const firstName = user.firstName?.trim();
+    const lastName = user.lastName?.trim();
+    if (firstName && lastName) {
+      return `${firstName} ${lastName}`;
+    }
+
+    const fullName = user.fullName?.trim();
+    if (fullName) {
+      return fullName;
+    }
+
+    if (firstName) {
+      return firstName;
+    }
+
+    return null;
+  }, [user]);
 
   const menuItems: MenuItem[] = useMemo(
     () => [
@@ -154,7 +177,14 @@ export function Sidebar() {
             )}
           >
             <p className="text-sm font-semibold text-[rgb(var(--foreground))] truncate">
-              Admin User
+              {!isUserLoaded ? (
+                <span
+                  className="inline-block h-4 w-24 rounded-md bg-[rgb(var(--muted))] animate-pulse"
+                  aria-hidden="true"
+                />
+              ) : (
+                displayName ?? "Usuario"
+              )}
             </p>
 
             <button

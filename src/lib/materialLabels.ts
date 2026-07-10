@@ -1,0 +1,18 @@
+export const MATERIAL_LABELS: Record<string, { label: string; emoji: string }> = {
+  plastic: { label: "Plástico", emoji: "♻️" },
+  plastic_bottles: { label: "Botellas PET", emoji: "🍶" },
+  caps: { label: "Tapas", emoji: "🔵" },
+  paper: { label: "Papel", emoji: "📄" },
+  cardboard: { label: "Cartón", emoji: "📦" },
+  glass: { label: "Vidrio", emoji: "🍾" },
+  electronics: { label: "Electrónicos", emoji: "💻" },
+  phones: { label: "Celulares", emoji: "📱" },
+  computers: { label: "Computadores", emoji: "🖥️" },
+  batteries: { label: "Pilas y baterías", emoji: "🔋" },
+  cans: { label: "Latas", emoji: "🥫" },
+  cooking_oil: { label: "Aceite usado", emoji: "🛢️" },
+  clothing_good: { label: "Ropa buen estado", emoji: "👕" },
+  clothing_any: { label: "Ropa cualquier estado", emoji: "🧥" },
+  organic: { label: "Orgánicos", emoji: "🍃" },
+  compost: { label: "Compostaje", emoji: "🌱" },
+};
