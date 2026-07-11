@@ -12,7 +12,8 @@ import { cx } from "@/lib/cx";
 const SEARCH_DEBOUNCE_MS = 200;
 
 const navLinks = [
-  { name: "Home", path: ROUTES.home },
+  { name: "Dashboard", path: ROUTES.dashboard
+   },
   { name: "Centres", path: ROUTES.centres },
   { name: "Recycle", path: ROUTES.register },
   { name: "My Impact", path: ROUTES.wallet },
